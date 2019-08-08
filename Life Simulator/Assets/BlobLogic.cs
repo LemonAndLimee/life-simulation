@@ -40,8 +40,6 @@ public class BlobLogic : MonoBehaviour
 	public int range;
 	public SphereCollider sensor;
 
-	public float energy;
-	public float requiredFood;
 
 	// Start is called before the first frame update
 	void Start()
@@ -109,8 +107,6 @@ public class BlobLogic : MonoBehaviour
 
 		currentMat.color = startColor;
 
-		energy = initialSpeed / speed;
-        requiredFood = 1f / energy;
 
     }
 
@@ -240,39 +236,36 @@ public class BlobLogic : MonoBehaviour
 	{
 		if (isFirst == false)
         {
-            if (foodCount <= requiredFood)
+            survivalChance = (float)foodCount * 100;
+            int ran = Random.Range(0, 101);
+            if (ran <= survivalChance)
             {
-                survivalChance = (requiredFood - (float)foodCount) * 100f;
-                int ran = Random.Range(0, 101);
-                if (ran <= survivalChance)
-                {
-                    doesSurvive = true;
+                doesSurvive = true;
 
-                }
-                else
-                {
-                    doesSurvive = false;
-                    Destroy(gameObject);
-                }
             }
-            
-            if (foodCount > requiredFood)
+            else
             {
-                replicateChance = (((float)foodCount - requiredFood) / requiredFood) * 100;
-                int ran = Random.Range(0, 101);
-                if (ran <= replicateChance)
-                {
-                    doesReplicate = true;
-                    Replicate(speed, range);
-                }
-                else
-                {
-                    doesReplicate = false;
-                }
+                doesSurvive = false;
+                Destroy(gameObject);
+            }
+
+            replicateChance = ((float)foodCount - 1) * 100;
+            ran = Random.Range(0, 101);
+            if (ran <= replicateChance)
+            {
+                doesReplicate = true;
+                Replicate(speed, range);
+            }
+            else
+            {
+                doesReplicate = false;
             }
 
             foodCount = 0;
         }
+
+        survivalChance = 0;
+        replicateChance = 0;
 	}
 
 	public void Replicate(float parentSpeed, int parentRange)
