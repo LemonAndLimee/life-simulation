@@ -166,13 +166,20 @@ public class BlobSpawn : MonoBehaviour
         
     }
 
-    public void EndDay()
+    public void EndDay(bool isTrue)
     {
         GameObject[] blobs = GameObject.FindGameObjectsWithTag("Blob");
         foreach (GameObject blob in blobs)
         {
             BlobLogic blobscript = blob.GetComponent<BlobLogic>();
-            blobscript.EndDay();
+            if (isTrue == true)
+            {
+                blobscript.EndDay(true);
+            }
+            else
+            {
+                blobscript.EndDay(false);
+            }
         }
     }
 }

@@ -38,7 +38,14 @@ public class DayCycle : MonoBehaviour
             timer = 0;
             isDay = false;
             spawnScript.Destroy();
-            blobSpawnScript.EndDay();
+            if (days <= 1)
+            {
+                blobSpawnScript.EndDay(true);
+            }
+            else
+            {
+                blobSpawnScript.EndDay(false);
+            }
         }
         else if (timer >= waitTime && isDay == false)
         {
