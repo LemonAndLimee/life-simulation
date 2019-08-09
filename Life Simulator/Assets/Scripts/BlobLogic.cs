@@ -37,15 +37,28 @@ public class BlobLogic : MonoBehaviour
 	public float initialSpeed;
 	public float initialRange;
 
+    public float immunity;
+    public float initialImmunity;
+    public float acquiredImmunity;
+
+    public bool isInfected;
+    public float diseaseTime;
+    public float lethality;
+    public float infectivity;
+    public float diseaseTimer;
+
+
 	public int range;
 	public SphereCollider sensor;
 
+    public Color startColor;
 
 	// Start is called before the first frame update
 	void Start()
 	{
+        acquiredImmunity = 0;
 
-		sensor = GetComponent<SphereCollider>();
+        sensor = GetComponentInChildren<SphereCollider>();
 		sensor.radius = range / 2;
 
 		spawnScript = GameObject.Find("GameManager").GetComponent<BlobSpawn>();
@@ -58,7 +71,7 @@ public class BlobLogic : MonoBehaviour
 
 		foodCount = 1.0;
 
-		Color startColor = new Color(1f, 0f, 0f, 1f);
+		startColor = new Color(1f, 0f, 0f, 1f);
 
 		if (speed <= 0)
 		{
@@ -108,11 +121,35 @@ public class BlobLogic : MonoBehaviour
 		currentMat.color = startColor;
 
 
+        
+        diseaseTimer = 0f;
+
+        foodPercentage = 1 / (speed / initialSpeed);
     }
 
 	// Update is called once per frame
 	void Update()
 	{
+        diseaseTime = (1f / (immunity + acquiredImmunity)) * 100f;
+
+        if (isInfected == true)
+        {
+            diseaseTimer += Time.deltaTime;
+
+            Color diseaseColor = new Color(0f, 0f, 0f, 1f);
+            currentMat.color = diseaseColor;
+
+            if (diseaseTimer >= diseaseTime)
+            {
+                DiseaseVerdict((int)immunity, (int)lethality);
+                diseaseTimer = 0;
+            }
+        }
+        else
+        {
+            currentMat.color = startColor;
+        }
+
 		timer += Time.deltaTime;
 
 		int limit = Random.Range(1, 5);
@@ -200,7 +237,7 @@ public class BlobLogic : MonoBehaviour
 		}
 		else if (collider.transform.tag == "Food")
 		{
-			foodCount += 1;
+			foodCount += (1 * foodPercentage);
 			Destroy(collider.gameObject);
 			detectedFood = false;
 		}
@@ -220,6 +257,60 @@ public class BlobLogic : MonoBehaviour
 			detectedFood = false;
 		}
 	}
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.tag == "BlobChild")
+        {
+            if (isInfected == true)
+            {
+                Debug.Log("infect");
+                BlobLogic blobScript = other.transform.parent.GetComponent<BlobLogic>();
+                blobScript.Infect((int)infectivity, (int)lethality, false);
+            }
+        }
+    }
+
+    public void Infect(int infect, int lethal, bool isPatientZero)
+    {
+        int ran = Random.Range(0, 101);
+        if (ran >= (immunity + acquiredImmunity))
+        {
+            ran = Random.Range(0, 101);
+            if (ran <= infect || isPatientZero == true)
+            {
+                isInfected = true;
+
+                lethality = lethal;
+                infectivity = infect;
+            }
+            else
+            {
+                isInfected = false;
+            }
+        }
+        
+    }
+
+    public void DiseaseVerdict(int imm, int leth)
+    {
+        int ran = Random.Range(0, 101);
+        if (ran >= (imm + acquiredImmunity))
+        {
+            ran = Random.Range(0, 101);
+            if (ran <= lethality)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+            }
+        }
+        else
+        {
+            isInfected = false;
+        }
+    }
 
 	public void FoodDetected(Vector3 targetPos)
 	{
@@ -250,15 +341,18 @@ public class BlobLogic : MonoBehaviour
             }
 
             replicateChance = ((float)foodCount - 1) * 100;
-            ran = Random.Range(0, 101);
-            if (ran <= replicateChance)
+            if (replicateChance >= 0)
             {
-                doesReplicate = true;
-                Replicate(speed, range);
-            }
-            else
-            {
-                doesReplicate = false;
+                ran = Random.Range(0, 101);
+                if (ran <= replicateChance)
+                {
+                    doesReplicate = true;
+                    Replicate(speed, range, immunity);
+                }
+                else
+                {
+                    doesReplicate = false;
+                }
             }
 
             foodCount = 0;
@@ -268,7 +362,7 @@ public class BlobLogic : MonoBehaviour
         replicateChance = 0;
 	}
 
-	public void Replicate(float parentSpeed, int parentRange)
+	public void Replicate(float parentSpeed, int parentRange, float parentImmunity)
 	{
 		int ran = Random.Range(0, 101);
 		float newSpeed = parentSpeed;
@@ -294,11 +388,28 @@ public class BlobLogic : MonoBehaviour
 			}
 		}
 
-		GameObject clone = Instantiate(gameObject);
+        ran = Random.Range(0, 101);
+        float newImmunity = parentImmunity;
+        if (ran <= mutationChance)
+        {
+            ran = Random.Range(-8, 9);
+            newImmunity += ran;
+            if (newImmunity <= 0)
+            {
+                newImmunity = 1;
+            }
+            else if (newImmunity >= 100)
+            {
+                newImmunity = 100;
+            }
+        }
+
+        GameObject clone = Instantiate(gameObject);
 		clone.transform.position = transform.position;
 
 		BlobLogic blobScript = clone.GetComponent<BlobLogic>();
 		blobScript.speed = newSpeed;
 		blobScript.range = newRange;
+        blobScript.immunity = newImmunity;
 	}
 }
