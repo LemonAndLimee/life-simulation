@@ -203,33 +203,19 @@ public class BlobLogic : MonoBehaviour
         }
 		else
         {
-            if (stillRunning == true && isTouchingWall == false)
+            if (detectedFood == false)
             {
-                if (runTimer >= 2f)
-                {
-                    vel = transform.forward * -1;
-                    stillRunning = false;
-                    direction = (new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f))).normalized;
-                }
+                vel = direction;
 
+                Vector3 rot = transform.eulerAngles;
+                rot.x = 0f;
+                rot.y = 0f;
+                rot.z = 0f;
+                transform.eulerAngles = rot;
             }
-            else
+            else if (detectedFood == true)
             {
-               
-                if (detectedFood == false)
-                {
-                    vel = direction;
-
-                    Vector3 rot = transform.eulerAngles;
-                    rot.x = 0f;
-                    rot.y = 0f;
-                    rot.z = 0f;
-                    transform.eulerAngles = rot;
-                }
-                else if (detectedFood == true)
-                {
-                    vel = transform.forward;
-                }
+                vel = transform.forward;
             }
         }
 
@@ -316,7 +302,6 @@ public class BlobLogic : MonoBehaviour
     {
         runTimer = 0f;
         isRunning = false;
-        stillRunning = true;
     }
 
     public void Infect(int infect, int lethal, bool isPatientZero)

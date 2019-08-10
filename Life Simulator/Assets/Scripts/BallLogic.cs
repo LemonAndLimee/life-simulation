@@ -5,11 +5,12 @@ using UnityEngine;
 public class BallLogic : MonoBehaviour
 {
 
-    public float speed;
+    public float speed = 20f;
     public Vector3 direction;
 
     public Vector3 vel;
 
+    public int foodCount;
 
     public float timer;
 
@@ -19,6 +20,8 @@ public class BallLogic : MonoBehaviour
     public bool isZplus;
     public bool isZminus;
 
+    public float survivalChance;
+    public float replicateChance;
 
     public bool detectedFood;
     public GameObject target;
@@ -27,8 +30,7 @@ public class BallLogic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-        speed = 20f;
+        foodCount = 0;
 
         direction = (new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f))).normalized;
     }
@@ -119,7 +121,7 @@ public class BallLogic : MonoBehaviour
         else if (collider.transform.tag == "Blob")
         {
             Destroy(collider.gameObject);
-
+            foodCount += 1;
         }
     }
     public void OnCollisionExit(Collision collider)
@@ -177,6 +179,17 @@ public class BallLogic : MonoBehaviour
             target = tar;
             hasTarget = true;
         }
+        else
+        {
+            BlobLogic blobScript = tar.transform.GetComponent<BlobLogic>();
+            BlobLogic targetScript = target.transform.GetComponent<BlobLogic>();
+            if (blobScript.speed < targetScript.speed)
+            {
+                targetScript.Safe();
+                target = tar;
+                targetScript.Run(gameObject);
+            }
+        }
     }
     public void FoodEscaped()
     {
@@ -184,5 +197,36 @@ public class BallLogic : MonoBehaviour
         hasTarget = false;
     }
 
+    public void EndDay()
+    {
+
+        survivalChance = ((float)foodCount/2) * 100;
+        int ran = Random.Range(0, 101);
+        if (ran > survivalChance)
+        {
+            Destroy(gameObject);
+        }
+
+        replicateChance = ((float)foodCount - 2) * 100;
+        if (replicateChance >= 0)
+        {
+            ran = Random.Range(0, 101);
+            if (ran <= replicateChance)
+            {
+                Replicate();
+            }
+
+        }
+
+        foodCount = 0;
+        survivalChance = 0;
+
+    }
+
+    public void Replicate()
+    {
+        GameObject clone = Instantiate(gameObject);
+        clone.transform.position = transform.position;
+    }
 
 }

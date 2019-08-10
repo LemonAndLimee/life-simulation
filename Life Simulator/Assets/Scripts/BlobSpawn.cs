@@ -220,6 +220,13 @@ public class BlobSpawn : MonoBehaviour
                 blobscript.EndDay(false);
             }
         }
+
+        GameObject[] balls = GameObject.FindGameObjectsWithTag("Ball");
+        foreach (GameObject ball in balls)
+        {
+            BallLogic ballScript = ball.GetComponent<BallLogic>();
+            ballScript.EndDay();
+        }
     }
 
     public void AddDisease(int infect, int lethal)
