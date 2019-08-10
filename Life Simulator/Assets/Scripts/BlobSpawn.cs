@@ -52,10 +52,6 @@ public class BlobSpawn : MonoBehaviour
     public Text maxImmunityText;
     public Text immunityText;
 
-    public float totalAcquired;
-    public float averageAcquired;
-
-    public Text acquiredImmunityText;
 
     public int blobCount;
 
@@ -147,7 +143,6 @@ public class BlobSpawn : MonoBehaviour
             totalSpeed += blobscript.speed;
             totalRange += blobscript.range;
             totalImmunity += blobscript.immunity;
-            totalAcquired += blobscript.acquiredImmunity;
 
             if (blobscript.speed < minSpeed)
             {
@@ -206,8 +201,6 @@ public class BlobSpawn : MonoBehaviour
         minImmunityText.text = "Minimum Immunity: " + minImmunity.ToString() + "%";
         maxImmunityText.text = "Maximum Immunity: " + maxImmunity.ToString() + "%";
 
-        averageAcquired = totalAcquired / blobCount;
-        acquiredImmunityText.text = "Average Acquired Immunity: " + averageAcquired.ToString() + "%";
         
         
     }

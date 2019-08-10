@@ -39,7 +39,6 @@ public class BlobLogic : MonoBehaviour
 
     public float immunity;
     public float initialImmunity;
-    public float acquiredImmunity;
 
     public bool isInfected;
     public float diseaseTime;
@@ -56,7 +55,6 @@ public class BlobLogic : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-        acquiredImmunity = 0;
 
         sensor = GetComponentInChildren<SphereCollider>();
 		sensor.radius = range / 2;
@@ -130,7 +128,7 @@ public class BlobLogic : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-        diseaseTime = (1f / (immunity + acquiredImmunity)) * 100f;
+        diseaseTime = (1f / (immunity)) * 100f;
 
         if (isInfected == true)
         {
@@ -274,7 +272,7 @@ public class BlobLogic : MonoBehaviour
     public void Infect(int infect, int lethal, bool isPatientZero)
     {
         int ran = Random.Range(0, 101);
-        if (ran >= (immunity + acquiredImmunity))
+        if (ran >= (immunity))
         {
             ran = Random.Range(0, 101);
             if (ran <= infect || isPatientZero == true)
@@ -295,7 +293,7 @@ public class BlobLogic : MonoBehaviour
     public void DiseaseVerdict(int imm, int leth)
     {
         int ran = Random.Range(0, 101);
-        if (ran >= (imm + acquiredImmunity))
+        if (ran >= (imm))
         {
             ran = Random.Range(0, 101);
             if (ran <= lethality)
@@ -304,6 +302,7 @@ public class BlobLogic : MonoBehaviour
             }
             else
             {
+                isInfected = false;
             }
         }
         else
