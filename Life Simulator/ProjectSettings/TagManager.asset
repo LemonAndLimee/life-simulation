@@ -8,6 +8,8 @@ TagManager:
   - Wall
   - Blob
   - BlobChild
+  - BallChild
+  - Ball
   layers:
   - Default
   - TransparentFX

@@ -46,11 +46,15 @@ public class BlobLogic : MonoBehaviour
     public float infectivity;
     public float diseaseTimer;
 
+    public bool isRunning;
+    public bool stillRunning;
 
 	public int range;
 	public SphereCollider sensor;
 
     public Color startColor;
+
+    public float runTimer;
 
 	// Start is called before the first frame update
 	void Start()
@@ -128,6 +132,11 @@ public class BlobLogic : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+        if (transform.position.x >= 50 || transform.position.x <= -50 || transform.position.z >= 50 || transform.position.z <= -50)
+        {
+            Destroy(gameObject);
+        }
+
         diseaseTime = (1f / (immunity)) * 100f;
 
         if (isInfected == true)
@@ -151,6 +160,8 @@ public class BlobLogic : MonoBehaviour
 		timer += Time.deltaTime;
 
 		int limit = Random.Range(1, 5);
+
+        runTimer += Time.deltaTime;
 
 		if (isTouchingWall == true)
 		{
@@ -186,20 +197,41 @@ public class BlobLogic : MonoBehaviour
 			}
 		}
 
-		if (detectedFood == false)
-		{
-			vel = direction;
-
-			Vector3 rot = transform.eulerAngles;
-			rot.x = 0f;
-			rot.y = 0f;
-			rot.z = 0f;
-			transform.eulerAngles = rot;
-		}
+        if (isRunning == true)
+        {
+            vel = transform.forward * -1;
+        }
 		else
-		{
-			vel = transform.forward;
-		}
+        {
+            if (stillRunning == true && isTouchingWall == false)
+            {
+                if (runTimer >= 2f)
+                {
+                    vel = transform.forward * -1;
+                    stillRunning = false;
+                    direction = (new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f))).normalized;
+                }
+
+            }
+            else
+            {
+               
+                if (detectedFood == false)
+                {
+                    vel = direction;
+
+                    Vector3 rot = transform.eulerAngles;
+                    rot.x = 0f;
+                    rot.y = 0f;
+                    rot.z = 0f;
+                    transform.eulerAngles = rot;
+                }
+                else if (detectedFood == true)
+                {
+                    vel = transform.forward;
+                }
+            }
+        }
 
 
 		Rigidbody rb = GetComponent<Rigidbody>();
@@ -267,6 +299,24 @@ public class BlobLogic : MonoBehaviour
                 blobScript.Infect((int)infectivity, (int)lethality, false);
             }
         }
+        else if (other.transform.tag == "BallChild")
+        {
+            BallLogic ballScript = other.transform.parent.GetComponent<BallLogic>();
+            ballScript.FoodDetected(gameObject);
+        }
+    }
+
+    public void Run(GameObject predator)
+    {
+        isRunning = true;
+        transform.LookAt(predator.transform.position);
+        detectedFood = false;
+    }
+    public void Safe()
+    {
+        runTimer = 0f;
+        isRunning = false;
+        stillRunning = true;
     }
 
     public void Infect(int infect, int lethal, bool isPatientZero)
