@@ -5,7 +5,7 @@ using UnityEngine;
 public class BallLogic : MonoBehaviour
 {
 
-    public float speed = 20f;
+    public float speed;
     public Vector3 direction;
 
     public Vector3 vel;
@@ -27,26 +27,90 @@ public class BallLogic : MonoBehaviour
     public GameObject target;
     public bool hasTarget;
 
+    public bool isFull;
+    public float hungerTime;
+
     // Start is called before the first frame update
     void Start()
     {
+        speed = 20f;
+
         foodCount = 0;
 
         direction = (new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f))).normalized;
+
+        hungerTime = 0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (foodCount <= 0)
+        {
+            hungerTime = 0f;
+            isFull = false;
+            speed = 20f;
+        }
+        else if (foodCount >= 4)
+        {
+            isFull = true;
+            speed = 5f;
+        }
+        else if (foodCount < 4)
+        {
+            isFull = false;
+            speed = 20f;
+        }
 
         timer += Time.deltaTime;
 
         int limit = Random.Range(1, 5);
 
+        hungerTime -= Time.deltaTime;
 
+        if (isFull == false)
+        {
+            if (detectedFood == false)
+            {
+                vel = direction;
 
-        if (detectedFood == false)
+                Vector3 rot = transform.eulerAngles;
+                rot.x = 0f;
+                rot.y = 0f;
+                rot.z = 0f;
+                transform.eulerAngles = rot;
+            }
+            else
+            {
+                if (target != null)
+                {
+                    BlobLogic blobScript = target.GetComponent<BlobLogic>();
+                    blobScript.Run(gameObject);
+
+                    transform.LookAt(target.transform.position);
+                    Vector3 rot = transform.eulerAngles;
+                    rot.x = 0f;
+                    rot.z = 0f;
+                    transform.eulerAngles = rot;
+
+                    vel = transform.forward;
+                }
+                else
+                {
+                    detectedFood = false;
+                    hasTarget = false;
+
+                    vel = direction;
+
+                    Vector3 rot = transform.eulerAngles;
+                    rot.x = 0f;
+                    rot.y = 0f;
+                    rot.z = 0f;
+                    transform.eulerAngles = rot;
+                }
+            }
+        }
+        else
         {
             vel = direction;
 
@@ -56,37 +120,8 @@ public class BallLogic : MonoBehaviour
             rot.z = 0f;
             transform.eulerAngles = rot;
         }
-        else
-        {
-            if (target != null)
-            {
-                BlobLogic blobScript = target.GetComponent<BlobLogic>();
-                blobScript.Run(gameObject);
 
-                transform.LookAt(target.transform.position);
-                Vector3 rot = transform.eulerAngles;
-                rot.x = 0f;
-                rot.z = 0f;
-                transform.eulerAngles = rot;
-
-                vel = transform.forward;
-            }
-            else
-            {
-                detectedFood = false;
-                hasTarget = false;
-
-                vel = direction;
-
-                Vector3 rot = transform.eulerAngles;
-                rot.x = 0f;
-                rot.y = 0f;
-                rot.z = 0f;
-                transform.eulerAngles = rot;
-            }
-        }
-
-
+        
         Rigidbody rb = GetComponent<Rigidbody>();
         rb.velocity = vel * speed;
     }
@@ -122,6 +157,7 @@ public class BallLogic : MonoBehaviour
         {
             Destroy(collider.gameObject);
             foodCount += 1;
+            hungerTime += 2f;
         }
     }
     public void OnCollisionExit(Collision collider)
@@ -172,22 +208,25 @@ public class BallLogic : MonoBehaviour
     public void FoodDetected(GameObject tar)
     {
 
-        detectedFood = true;
+        if (isFull == false)
+        {
+            detectedFood = true;
 
-        if (hasTarget == false)
-        {
-            target = tar;
-            hasTarget = true;
-        }
-        else
-        {
-            BlobLogic blobScript = tar.transform.GetComponent<BlobLogic>();
-            BlobLogic targetScript = target.transform.GetComponent<BlobLogic>();
-            if (blobScript.speed < targetScript.speed)
+            if (hasTarget == false)
             {
-                targetScript.Safe();
                 target = tar;
-                targetScript.Run(gameObject);
+                hasTarget = true;
+            }
+            else
+            {
+                BlobLogic blobScript = tar.transform.GetComponent<BlobLogic>();
+                BlobLogic targetScript = target.transform.GetComponent<BlobLogic>();
+                if (blobScript.speed < targetScript.speed)
+                {
+                    targetScript.Safe();
+                    target = tar;
+                    targetScript.Run(gameObject);
+                }
             }
         }
     }
@@ -200,7 +239,14 @@ public class BallLogic : MonoBehaviour
     public void EndDay()
     {
 
-        survivalChance = ((float)foodCount/2) * 100;
+        if (hungerTime <= 0f)
+        {
+            survivalChance = ((float)foodCount / 2) * 100;
+        }
+        else
+        {
+            survivalChance = 100;
+        }
         int ran = Random.Range(0, 101);
         if (ran > survivalChance)
         {
@@ -227,6 +273,7 @@ public class BallLogic : MonoBehaviour
     {
         GameObject clone = Instantiate(gameObject);
         clone.transform.position = transform.position;
+
     }
 
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5357178604258845567}
   - component: {fileID: 7310285554396266080}
   - component: {fileID: 6507923823409064294}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ball
   m_TagString: Ball
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3069698413395435747}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 4, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 5536518602380481941}
   m_Father: {fileID: 0}
@@ -110,15 +110,20 @@ MonoBehaviour:
   speed: 0
   direction: {x: 0, y: 0, z: 0}
   vel: {x: 0, y: 0, z: 0}
+  foodCount: 0
   timer: 0
   isTouchingWall: 0
   isXplus: 0
   isXminus: 0
   isZplus: 0
   isZminus: 0
+  survivalChance: 0
+  replicateChance: 0
   detectedFood: 0
   target: {fileID: 0}
   hasTarget: 0
+  isFull: 0
+  hungerTime: 0
 --- !u!54 &6507923823409064294
 Rigidbody:
   m_ObjectHideFlags: 0
