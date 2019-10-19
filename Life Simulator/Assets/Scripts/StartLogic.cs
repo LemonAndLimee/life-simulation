@@ -11,7 +11,6 @@ public class StartLogic : MonoBehaviour
     public int food;
     public int blobs;
     public int range;
-    public int immunity;
 
     public Text speedText;
     public Text foodText;
@@ -23,7 +22,6 @@ public class StartLogic : MonoBehaviour
     public bool foodEntered;
     public bool blobsEntered;
     public bool rangeEntered;
-    public bool immunityEntered;
 
     // Start is called before the first frame update
     void Start()
@@ -50,10 +48,6 @@ public class StartLogic : MonoBehaviour
         {
             range = Convert.ToInt32(rangeText.text);
         }
-        if (immunityEntered == true)
-        {
-            immunity = Convert.ToInt32(immunityText.text);
-        }
     }
 
     public void EnterSpeed()
@@ -72,14 +66,10 @@ public class StartLogic : MonoBehaviour
     {
         rangeEntered = true;
     }
-    public void EnterImmunity()
-    {
-        immunityEntered = true;
-    }
 
     public void Begin()
     {
-        if (speedEntered == true && foodEntered == true && blobsEntered == true && rangeEntered == true && immunityEntered == true)
+        if (speedEntered == true && foodEntered == true && blobsEntered == true && rangeEntered == true)
         {
             SceneManager.LoadScene(1);
         }

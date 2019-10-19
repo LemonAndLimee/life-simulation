@@ -41,17 +41,6 @@ public class BlobSpawn : MonoBehaviour
     public Text minRangeText;
     public Text maxRangeText;
 
-    public float initialImmunity;
-    public float minImmunity;
-    public float maxImmunity;
-    public float averageImmunity;
-    public float totalImmunity;
-
-    public Text initialImmunityText;
-    public Text minImmunityText;
-    public Text maxImmunityText;
-    public Text immunityText;
-
 
     public int blobCount;
 
@@ -62,7 +51,6 @@ public class BlobSpawn : MonoBehaviour
         blobNumber = startScript.blobs;
         initialSpeed = (float)startScript.initialSpeed;
         initialRange = startScript.range;
-        initialImmunity = startScript.immunity;
 
         for (int i = 1; i <= blobNumber; i++)
         {
@@ -72,7 +60,6 @@ public class BlobSpawn : MonoBehaviour
             BlobLogic blobScript = currentObject.GetComponent<BlobLogic>();
             blobScript.speed = initialSpeed;
             blobScript.range = (int)initialRange;
-            blobScript.immunity = initialImmunity;
 
             int ran = Random.Range(0, 2);
             if (ran == 0)
@@ -113,13 +100,11 @@ public class BlobSpawn : MonoBehaviour
 
         initialRangeText.text = "Initial Detection Range: " + initialRange.ToString();
 
-        initialImmunityText.text = "Initial Immunity: " + initialImmunity.ToString();
 
         averageSpeed = initialSpeed;
 
         averageRange = initialRange;
 
-        averageImmunity = initialImmunity;
     }
 
     // Update is called once per frame
@@ -131,9 +116,6 @@ public class BlobSpawn : MonoBehaviour
         minRange = averageRange;
         maxRange = averageRange;
 
-        minImmunity = averageImmunity;
-        maxImmunity = averageImmunity;
-
         blobCount = 0;
         GameObject[] blobs = GameObject.FindGameObjectsWithTag("Blob");
         foreach(GameObject blob in blobs)
@@ -142,7 +124,6 @@ public class BlobSpawn : MonoBehaviour
             BlobLogic blobscript = blob.GetComponent<BlobLogic>();
             totalSpeed += blobscript.speed;
             totalRange += blobscript.range;
-            totalImmunity += blobscript.immunity;
 
             if (blobscript.speed < minSpeed)
             {
@@ -162,14 +143,6 @@ public class BlobSpawn : MonoBehaviour
                 maxRange = (float)blobscript.range;
             }
 
-            if (blobscript.immunity < minImmunity)
-            {
-                minImmunity = blobscript.immunity;
-            }
-            else if (blobscript.immunity > maxImmunity)
-            {
-                maxImmunity = blobscript.immunity;
-            }
 
             if (dayScript.isDay == false)
             {
@@ -194,12 +167,6 @@ public class BlobSpawn : MonoBehaviour
         minRangeText.text = "Minimum Detection Range: " + minRange.ToString();
         maxRangeText.text = "Maximum Detection Range: " + maxRange.ToString();
 
-        averageImmunity = totalImmunity / blobCount;
-        totalImmunity = 0;
-        immunityText.text = "Average Immunity: " + averageImmunity.ToString() + "%";
-
-        minImmunityText.text = "Minimum Immunity: " + minImmunity.ToString() + "%";
-        maxImmunityText.text = "Maximum Immunity: " + maxImmunity.ToString() + "%";
 
         
         
@@ -221,12 +188,7 @@ public class BlobSpawn : MonoBehaviour
             }
         }
 
-        GameObject[] balls = GameObject.FindGameObjectsWithTag("Ball");
-        foreach (GameObject ball in balls)
-        {
-            BallLogic ballScript = ball.GetComponent<BallLogic>();
-            ballScript.EndDay();
-        }
+
     }
 
     public void AddDisease(int infect, int lethal)
@@ -239,7 +201,6 @@ public class BlobSpawn : MonoBehaviour
             {
                 BlobLogic blobScript = blob.GetComponent<BlobLogic>();
                 
-                blobScript.Infect(infect, lethal, true);
 
             }
             index += 1;

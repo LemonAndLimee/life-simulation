@@ -37,14 +37,6 @@ public class BlobLogic : MonoBehaviour
 	public float initialSpeed;
 	public float initialRange;
 
-    public float immunity;
-    public float initialImmunity;
-
-    public bool isInfected;
-    public float diseaseTime;
-    public float lethality;
-    public float infectivity;
-    public float diseaseTimer;
 
     public bool isRunning;
     public bool stillRunning;
@@ -124,7 +116,6 @@ public class BlobLogic : MonoBehaviour
 
 
         
-        diseaseTimer = 0f;
 
         foodPercentage = 1 / (speed / initialSpeed);
     }
@@ -137,25 +128,7 @@ public class BlobLogic : MonoBehaviour
             Destroy(gameObject);
         }
 
-        diseaseTime = (1f / (immunity)) * 100f;
-
-        if (isInfected == true)
-        {
-            diseaseTimer += Time.deltaTime;
-
-            Color diseaseColor = new Color(0f, 0f, 0f, 1f);
-            currentMat.color = diseaseColor;
-
-            if (diseaseTimer >= diseaseTime)
-            {
-                DiseaseVerdict((int)immunity, (int)lethality);
-                diseaseTimer = 0;
-            }
-        }
-        else
-        {
-            currentMat.color = startColor;
-        }
+        
 
 		timer += Time.deltaTime;
 
@@ -274,77 +247,7 @@ public class BlobLogic : MonoBehaviour
 		}
 	}
 
-    public void OnTriggerEnter(Collider other)
-    {
-        if (other.transform.tag == "BlobChild")
-        {
-            if (isInfected == true)
-            {
-                Debug.Log("infect");
-                BlobLogic blobScript = other.transform.parent.GetComponent<BlobLogic>();
-                blobScript.Infect((int)infectivity, (int)lethality, false);
-            }
-        }
-        else if (other.transform.tag == "BallChild")
-        {
-            BallLogic ballScript = other.transform.parent.GetComponent<BallLogic>();
-            ballScript.FoodDetected(gameObject);
-        }
-    }
 
-    public void Run(GameObject predator)
-    {
-        isRunning = true;
-        transform.LookAt(predator.transform.position);
-        detectedFood = false;
-    }
-    public void Safe()
-    {
-        runTimer = 0f;
-        isRunning = false;
-    }
-
-    public void Infect(int infect, int lethal, bool isPatientZero)
-    {
-        int ran = Random.Range(0, 101);
-        if (ran >= (immunity))
-        {
-            ran = Random.Range(0, 101);
-            if (ran <= infect || isPatientZero == true)
-            {
-                isInfected = true;
-
-                lethality = lethal;
-                infectivity = infect;
-            }
-            else
-            {
-                isInfected = false;
-            }
-        }
-        
-    }
-
-    public void DiseaseVerdict(int imm, int leth)
-    {
-        int ran = Random.Range(0, 101);
-        if (ran >= (imm))
-        {
-            ran = Random.Range(0, 101);
-            if (ran <= lethality)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                isInfected = false;
-            }
-        }
-        else
-        {
-            isInfected = false;
-        }
-    }
 
 	public void FoodDetected(Vector3 targetPos)
 	{
@@ -381,7 +284,7 @@ public class BlobLogic : MonoBehaviour
                 if (ran <= replicateChance)
                 {
                     doesReplicate = true;
-                    Replicate(speed, range, immunity);
+                    Replicate(speed, range);
                 }
                 else
                 {
@@ -396,7 +299,7 @@ public class BlobLogic : MonoBehaviour
         replicateChance = 0;
 	}
 
-	public void Replicate(float parentSpeed, int parentRange, float parentImmunity)
+	public void Replicate(float parentSpeed, int parentRange)
 	{
 		int ran = Random.Range(0, 101);
 		float newSpeed = parentSpeed;
@@ -422,21 +325,6 @@ public class BlobLogic : MonoBehaviour
 			}
 		}
 
-        ran = Random.Range(0, 101);
-        float newImmunity = parentImmunity;
-        if (ran <= mutationChance)
-        {
-            ran = Random.Range(-8, 9);
-            newImmunity += ran;
-            if (newImmunity <= 0)
-            {
-                newImmunity = 1;
-            }
-            else if (newImmunity >= 100)
-            {
-                newImmunity = 100;
-            }
-        }
 
         GameObject clone = Instantiate(gameObject);
 		clone.transform.position = transform.position;
@@ -444,6 +332,5 @@ public class BlobLogic : MonoBehaviour
 		BlobLogic blobScript = clone.GetComponent<BlobLogic>();
 		blobScript.speed = newSpeed;
 		blobScript.range = newRange;
-        blobScript.immunity = newImmunity;
 	}
 }
