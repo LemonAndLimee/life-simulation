@@ -10,6 +10,8 @@ public class BlobSpawn : MonoBehaviour
     public GameObject blobPrefab;
     public GameObject currentObject;
 
+    public StartLogic startScript;
+
     public int blobNumber;
 
     public int x;
@@ -47,7 +49,7 @@ public class BlobSpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartLogic startScript = GameObject.Find("StartManager").GetComponent<StartLogic>();
+        startScript = GameObject.Find("StartManager").GetComponent<StartLogic>();
         blobNumber = startScript.blobs;
         initialSpeed = (float)startScript.initialSpeed;
         initialRange = startScript.range;

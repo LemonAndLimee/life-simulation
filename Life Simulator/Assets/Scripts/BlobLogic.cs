@@ -5,6 +5,7 @@ using UnityEngine;
 public class BlobLogic : MonoBehaviour
 {
 	public BlobSpawn spawnScript;
+    public StartLogic startScript;
 
 	public float speed;
 	public Vector3 direction;
@@ -51,7 +52,7 @@ public class BlobLogic : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-
+        startScript = GameObject.Find("StartManager").GetComponent<StartLogic>();
         sensor = GetComponentInChildren<SphereCollider>();
 		sensor.radius = range / 2;
 
@@ -115,9 +116,15 @@ public class BlobLogic : MonoBehaviour
 		currentMat.color = startColor;
 
 
-        
+        if (startScript.stamina == true)
+        {
+            foodPercentage = 1 / (speed / initialSpeed);
+        }
+        else
+        {
+            foodPercentage = 1;
+        }
 
-        foodPercentage = 1 / (speed / initialSpeed);
     }
 
 	// Update is called once per frame

@@ -11,17 +11,19 @@ public class StartLogic : MonoBehaviour
     public int food;
     public int blobs;
     public int range;
+    public bool stamina;
 
     public Text speedText;
     public Text foodText;
     public Text blobsText;
     public Text rangeText;
-    public Text immunityText;
+    public Toggle staminaToggle;
 
     public bool speedEntered;
     public bool foodEntered;
     public bool blobsEntered;
     public bool rangeEntered;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +50,8 @@ public class StartLogic : MonoBehaviour
         {
             range = Convert.ToInt32(rangeText.text);
         }
+
+        stamina = staminaToggle.isOn;
     }
 
     public void EnterSpeed()

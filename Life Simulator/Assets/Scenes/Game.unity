@@ -2209,7 +2209,6 @@ GameObject:
   - component: {fileID: 1879102139}
   - component: {fileID: 1879102138}
   - component: {fileID: 1879102141}
-  - component: {fileID: 1879102142}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2309,25 +2308,6 @@ MonoBehaviour:
   minRangeText: {fileID: 1208663751}
   maxRangeText: {fileID: 1089982459}
   blobCount: 0
---- !u!114 &1879102142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1879102137}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff95ee01c2f9ca147aabd78d42019cc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnScript: {fileID: 1879102141}
-  infectivity: 0
-  lethality: 0
-  infectivityText: {fileID: 0}
-  lethalityText: {fileID: 0}
-  infectivityEntered: 0
-  lethalityEntered: 0
 --- !u!1 &1895509409
 GameObject:
   m_ObjectHideFlags: 0
