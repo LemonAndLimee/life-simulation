@@ -193,19 +193,5 @@ public class BlobSpawn : MonoBehaviour
 
     }
 
-    public void AddDisease(int infect, int lethal)
-    {
-        GameObject[] blobs = GameObject.FindGameObjectsWithTag("Blob");
-        int index = 0;
-        foreach (GameObject blob in blobs)
-        {
-            if (index == Random.Range(0, (blobCount)))
-            {
-                BlobLogic blobScript = blob.GetComponent<BlobLogic>();
-                
-
-            }
-            index += 1;
-        }
-    }
+    
 }

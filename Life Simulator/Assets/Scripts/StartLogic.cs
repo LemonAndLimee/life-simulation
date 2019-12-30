@@ -75,7 +75,7 @@ public class StartLogic : MonoBehaviour
     {
         if (speedEntered == true && foodEntered == true && blobsEntered == true && rangeEntered == true)
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene("Evo");
         }
     }
 
